@@ -16,6 +16,15 @@ add_action( 'init', function () {
 	update_option( 'jn_needs_flush', 1, false );
 }, 99 );
 
+// The site is served over HTTPS (Hostinger forces it); make WordPress's own
+// address match so that assets are never requested over plain HTTP.
+add_action( 'init', function () {
+	if ( is_ssl() && 0 === strpos( (string) get_option( 'home' ), 'http://' ) ) {
+		update_option( 'home', set_url_scheme( get_option( 'home' ), 'https' ) );
+		update_option( 'siteurl', set_url_scheme( get_option( 'siteurl' ), 'https' ) );
+	}
+}, 1 );
+
 // Rewrite rules are rebuilt on the request after seeding, once the new
 // permalink and category settings are loaded by every taxonomy.
 add_action( 'init', function () {
